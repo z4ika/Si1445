@@ -3,6 +3,8 @@
 #ifndef SI1445_SI1145_H
 #define SI1445_SI1145_H
 
+#define true 1
+#define false 0
 //uint8_t SI1145_PARAM_QUERY = 0x80;
 
 /* COMMANDS */
@@ -128,7 +130,7 @@
 extern uint8_t readValue(uint8_t v);
 extern void si1145_startAuto();
 extern void si1145_reset();
-extern uint16_t readUltraViolet();
+extern float readUltraViolet();
 extern uint16_t readVisible();
 extern uint16_t readInfrared();
 
