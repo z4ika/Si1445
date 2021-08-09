@@ -5,9 +5,8 @@
 
 #define true 1
 #define false 0
-//uint8_t SI1145_PARAM_QUERY = 0x80;
 
-/* COMMANDS */
+/* Commands */
 #define SI1145_PARAM_QUERY 0x80
 #define SI1145_PARAM_SET 0xA0
 #define SI1145_NOP 0x0
@@ -34,7 +33,6 @@
 #define SI1145_PARAM_CHLIST_ENPS1 0x01
 #define SI1145_PARAM_CHLIST_ENPS2 0x02
 #define SI1145_PARAM_CHLIST_ENPS3 0x04
-
 #define SI1145_PARAM_PSLED12SEL 0x02
 #define SI1145_PARAM_PSLED12SEL_PS2NONE 0x00
 #define SI1145_PARAM_PSLED12SEL_PS2LED1 0x10
@@ -44,11 +42,9 @@
 #define SI1145_PARAM_PSLED12SEL_PS1LED1 0x01
 #define SI1145_PARAM_PSLED12SEL_PS1LED2 0x02
 #define SI1145_PARAM_PSLED12SEL_PS1LED3 0x04
-
 #define SI1145_PARAM_PSLED3SEL 0x03
 #define SI1145_PARAM_PSENCODE 0x05
 #define SI1145_PARAM_ALSENCODE 0x06
-
 #define SI1145_PARAM_PS1ADCMUX 0x07
 #define SI1145_PARAM_PS2ADCMUX 0x08
 #define SI1145_PARAM_PS3ADCMUX 0x09
@@ -57,43 +53,34 @@
 #define SI1145_PARAM_PSADCMISC 0x0C
 #define SI1145_PARAM_PSADCMISC_RANGE 0x20
 #define SI1145_PARAM_PSADCMISC_PSMODE 0x04
-
 #define SI1145_PARAM_ALSIRADCMUX 0x0E
 #define SI1145_PARAM_AUXADCMUX 0x0F
-
 #define SI1145_PARAM_ALSVISADCOUNTER 0x10
 #define SI1145_PARAM_ALSVISADCGAIN 0x11
 #define SI1145_PARAM_ALSVISADCMISC 0x12
 #define SI1145_PARAM_ALSVISADCMISC_VISRANGE 0x20
-
 #define SI1145_PARAM_ALSIRADCOUNTER 0x1D
 #define SI1145_PARAM_ALSIRADCGAIN 0x1E
 #define SI1145_PARAM_ALSIRADCMISC 0x1F
 #define SI1145_PARAM_ALSIRADCMISC_RANGE 0x20
-
 #define SI1145_PARAM_ADCCOUNTER_511CLK 0x70
-
 #define SI1145_PARAM_ADCMUX_SMALLIR 0x00
 #define SI1145_PARAM_ADCMUX_LARGEIR 0x03
 
-/* REGISTERS */
+/* Registers */
 #define SI1145_REG_PARTID 0x00
 #define SI1145_REG_REVID 0x01
 #define SI1145_REG_SEQID 0x02
-
 #define SI1145_REG_INTCFG 0x03
 #define SI1145_REG_INTCFG_INTOE 0x01
 #define SI1145_REG_INTCFG_INTMODE 0x02
-
 #define SI1145_REG_IRQEN 0x04
 #define SI1145_REG_IRQEN_ALSEVERYSAMPLE 0x01
 #define SI1145_REG_IRQEN_PS1EVERYSAMPLE 0x04
 #define SI1145_REG_IRQEN_PS2EVERYSAMPLE 0x08
 #define SI1145_REG_IRQEN_PS3EVERYSAMPLE 0x10
-
 #define SI1145_REG_IRQMODE1 0x05
 #define SI1145_REG_IRQMODE2 0x06
-
 #define SI1145_REG_HWKEY 0x07
 #define SI1145_REG_MEASRATE0 0x08
 #define SI1145_REG_MEASRATE1 0x09
@@ -109,7 +96,6 @@
 #define SI1145_REG_RESPONSE 0x20
 #define SI1145_REG_IRQSTAT 0x21
 #define SI1145_REG_IRQSTAT_ALS 0x01
-
 #define SI1145_REG_ALSVISDATA0 0x22
 #define SI1145_REG_ALSVISDATA1 0x23
 #define SI1145_REG_ALSIRDATA0 0x24
@@ -125,13 +111,23 @@
 #define SI1145_REG_PARAMRD 0x2E
 #define SI1145_REG_CHIPSTAT 0x30
 
-#define SI1145_PARAM_ADDR 0x60
+/* 
+    I2C address  
+    left shifted according to ST documentation
+                                               */
+#define SI1145_PARAM_ADDR (0x60 << 1)
 
-extern uint8_t readValue(uint8_t v);
-extern void si1145_startAuto();
-extern void si1145_reset();
-extern float readUltraViolet();
-extern uint16_t readVisible();
-extern uint16_t readInfrared();
+/* extern functions */
+extern void writeValue(uint8_t reg, uint8_t val)
+extern uint8_t readValue(uint8_t reg)
+extern uint8_t writeParam(uint8_t val1, uint8_t val2)
+extern uint8_t readParam(uint8_t val)
+extern uint16_t readMeasurment(uint8_t val)
+extern void si1145_reset()
+extern void si1145_config()
+extern float readUltraViolet(void)
+extern uint16_t readVisible(void)
+extern uint16_t readInfrared(void)
+extern uint16_t readProximity(void)
 
 #endif
