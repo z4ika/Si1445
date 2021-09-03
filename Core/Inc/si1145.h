@@ -3,6 +3,7 @@
 #ifndef SI1445_SI1145_H
 #define SI1445_SI1145_H
 
+/* bool */
 #define true 1
 #define false 0
 
@@ -85,7 +86,7 @@
 #define SI1145_REG_MEASRATE0 0x08
 #define SI1145_REG_MEASRATE1 0x09
 #define SI1145_REG_PSRATE 0x0A
-#define SI1145_REG_PSLED21 0x0F
+#define SI1145_REG_PSLED12 0x0F
 #define SI1145_REG_PSLED3 0x10
 #define SI1145_REG_UCOEFF0 0x13
 #define SI1145_REG_UCOEFF1 0x14

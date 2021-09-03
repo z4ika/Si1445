@@ -14,8 +14,8 @@ uint8_t readValue(uint8_t reg)
 
 uint8_t writeParam(uint8_t val1, uint8_t val2)
 {
-	writeValue(SI1145_REG_PARAMWR, v1);
-	writeValue(SI1145_REG_COMMAND, v2 | SI1145_PARAM_SET);
+	writeValue(SI1145_REG_PARAMWR, val1);
+	writeValue(SI1145_REG_COMMAND, val2 | SI1145_PARAM_SET);
 	return readValue(SI1145_REG_PARAMRD);
 }
 
@@ -55,53 +55,67 @@ void si1145_reset()
 
 void si1145_config()
 {
-	  // Enable coefficients for UV measurment
+	  /* Apply recommended UV coefficients values */
 	  writeValue(SI1145_REG_UCOEFF0, 0x29);
 	  writeValue(SI1145_REG_UCOEFF1, 0x89);
 	  writeValue(SI1145_REG_UCOEFF2, 0x82);
 	  writeValue(SI1145_REG_UCOEFF3, 0x00);
 
-	  // UV Sensor init
+	  /* Initialise UV sensor */
 	  writeParam(SI1145_PARAM_CHLIST, SI1145_PARAM_CHLIST_ENUV | SI1145_PARAM_CHLIST_ENALSIR |SI1145_PARAM_CHLIST_ENALSVIS | SI1145_PARAM_CHLIST_ENPS1);
 
-	  // enable interrupt on every sample
+	  /* Enable interrupts on every sample event */
 	  writeValue(SI1145_REG_INTCFG, SI1145_REG_INTCFG_INTOE);
 	  writeValue(SI1145_REG_IRQEN, SI1145_REG_IRQEN_ALSEVERYSAMPLE);
 
-	  // program LED current
-	  writeValue(SI1145_REG_PSLED21, 0x03);
+	  /* Apply LED current for proximity LED #1 */
+	  writeValue(SI1145_REG_PSLED12, 0x03);
 	  writeParam(SI1145_PARAM_PS1ADCMUX, SI1145_PARAM_ADCMUX_LARGEIR);
-	  // prox sensor #1 uses LED #1
+	  
+	  /* Use proximity LED #1 for sensor */
 	  writeParam(SI1145_PARAM_PSLED12SEL, SI1145_PARAM_PSLED12SEL_PS1LED1);
-	  // fastest clocks, clock div 1
+
+	  /* Set ADC clock divider to fastest (value 0 according to docs) */
 	  writeParam(SI1145_PARAM_PSADCGAIN, 0);
-	  // take 511 clocks to measure
+
+	  /* Set recovery peroid the ADC takes before making a PS measurment to 511 */
 	  writeParam(SI1145_PARAM_PSADCOUNTER, SI1145_PARAM_ADCCOUNTER_511CLK);
-	  // in prox mode, high range
+
+	  /* Proximity sensor mode set to high range */
 	  writeParam(SI1145_PARAM_PSADCMISC, SI1145_PARAM_PSADCMISC_RANGE | SI1145_PARAM_PSADCMISC_PSMODE);
 
+      /* Use small IR photodiode (0x00) */
 	  writeParam(SI1145_PARAM_ALSIRADCMUX, SI1145_PARAM_ADCMUX_SMALLIR);
-	  // fastest clocks, clock div 1
+
+	  /* Set ADC clock divider to fastest */
 	  writeParam(SI1145_PARAM_ALSIRADCGAIN, 0);
-	  // take 511 clocks to measure
+
+	  /* Set recovery peroid the ADC takes before making a IR measurment to 511 */
 	  writeParam(SI1145_PARAM_ALSIRADCOUNTER, SI1145_PARAM_ADCCOUNTER_511CLK);
-	  // in high range mode
+
+	  /* IR sensor mode set to high range */
 	  writeParam(SI1145_PARAM_ALSIRADCMISC, SI1145_PARAM_ALSIRADCMISC_RANGE);
-	  // fastest clocks, clock div 1
+
+	  /* Set ADC clock divider to fastest */
 	  writeParam(SI1145_PARAM_ALSVISADCGAIN, 0);
-	  // take 511 clocks to measure
+
+	  /* Set recovery peroid the ADC takes before making a visible light measurment to 511 */
 	  writeParam(SI1145_PARAM_ALSVISADCOUNTER, SI1145_PARAM_ADCCOUNTER_511CLK);
-	  // in high range mode (not normal signal)
+
+	   /* IR sensor mode set to high range */
 	  writeParam(SI1145_PARAM_ALSVISADCMISC, SI1145_PARAM_ALSVISADCMISC_VISRANGE);
-	  // Measurement rate setting for auto mode
+
+	  /* Rate which represents time interval at which sensor wakes up to perform measurment */
 	  writeValue(SI1145_REG_MEASRATE0, 0xFF);
-	  // Starts/Restarts autonomous ALS and PS loop
+
+	  /* Autonomous ALS and PS measurment mode in a loop */
       writeValue(SI1145_REG_COMMAND, SI1145_PSALS_AUTO);
 
       HAL_Delay(100);
 }
 
-// Read UV measurements
+/* Read UV measurements 
+   Divided by 100 according to docs */
 
 float readUltraViolet(void)
 {
@@ -109,7 +123,7 @@ float readUltraViolet(void)
     return UV;
 }
 
-// Read visible light spectrum measurements
+/* Read visible light measurements */
 
 uint16_t readVisible(void)
 {
@@ -117,7 +131,7 @@ uint16_t readVisible(void)
     return Visible;
 }
 
-// Read IR measurements
+/* Read IR measurements */
 
 uint16_t readInfrared(void)
 {
@@ -125,7 +139,7 @@ uint16_t readInfrared(void)
     return Infrared;
 }
 
-// Read proximity measurements
+/* Read proximity measurements */
 
 uint16_t readProximity(void)
 {
