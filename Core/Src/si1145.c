@@ -8,12 +8,13 @@ void Si1145_delay( Si1145_t *Si1145, uint8_t delay )
 		HAL_Delay( delay );
 }
 
-HAL_StatusTypeDef Si1445_default( Si1145_t *Si1145, I2C_HandleTypeDef *i2c )
+HAL_StatusTypeDef Si1445_default( Si1145_t *Si1145, I2C_HandleTypeDef *i2c, OS_t os )
 {
 	Si1145->i2c = i2c;
 	Si1145->address = SI1145_PARAM_ADDR;
 	Si1145->i2c_delay = 100;
 	Si1145->buffer = 0;
+	Si1145->os = os;
 
 	Si1145_default_config( Si1145 );
 	return HAL_OK;

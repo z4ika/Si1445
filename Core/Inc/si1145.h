@@ -11,7 +11,14 @@ typedef struct
     uint16_t address;
     uint8_t i2c_delay;
     uint8_t buffer;
+    OS_t os;
 } Si1145_t;
+
+typedef enum 
+{
+    OS_FREERTOS,
+    OS_STM32
+} OS_t;
 
 /* 
     I2C address  
