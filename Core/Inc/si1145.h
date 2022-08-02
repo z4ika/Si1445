@@ -1,11 +1,23 @@
 #include "i2c.h"
+#include <stdbool.h>
 
 #ifndef SI1445_SI1145_H
 #define SI1445_SI1145_H
 
-/* bool */
-#define true 1
-#define false 0
+/* Typedef */
+typedef struct 
+{
+    I2C_HandleTypeDef *i2c;
+    uint16_t address;
+    uint8_t i2c_delay;
+} Si1145_t;
+
+/* 
+    I2C address  
+    left shifted according to ST documentation
+    0x60 << 1 = 0xC0
+                                               */
+#define SI1145_PARAM_ADDR (0xC0)
 
 /* Commands */
 #define SI1145_PARAM_QUERY 0x80
@@ -97,38 +109,39 @@
 #define SI1145_REG_RESPONSE 0x20
 #define SI1145_REG_IRQSTAT 0x21
 #define SI1145_REG_IRQSTAT_ALS 0x01
+/* Visible light registers address offsets */
 #define SI1145_REG_ALSVISDATA0 0x22
 #define SI1145_REG_ALSVISDATA1 0x23
+/* Infrared light registers address offsets */
 #define SI1145_REG_ALSIRDATA0 0x24
 #define SI1145_REG_ALSIRDATA1 0x25
+/* Proximity sense 1 registers address offsets */
 #define SI1145_REG_PS1DATA0 0x26
 #define SI1145_REG_PS1DATA1 0x27
+/* Proximity sense 2 registers address offsets */
 #define SI1145_REG_PS2DATA0 0x28
 #define SI1145_REG_PS2DATA1 0x29
+/* Proximity sense 3 registers address offsets */
 #define SI1145_REG_PS3DATA0 0x2A
 #define SI1145_REG_PS3DATA1 0x2B
+/* Ultra-violet light registers address offsets */
 #define SI1145_REG_UVINDEX0 0x2C
 #define SI1145_REG_UVINDEX1 0x2D
 #define SI1145_REG_PARAMRD 0x2E
 #define SI1145_REG_CHIPSTAT 0x30
 
-/* 
-    I2C address  
-    left shifted according to ST documentation
-                                               */
-#define SI1145_PARAM_ADDR (0x60 << 1)
-
 /* extern functions */
-extern void writeValue(uint8_t reg, uint8_t val)
-extern uint8_t readValue(uint8_t reg)
-extern uint8_t writeParam(uint8_t val1, uint8_t val2)
-extern uint8_t readParam(uint8_t val)
-extern uint16_t readMeasurment(uint8_t val)
-extern void si1145_reset()
-extern void si1145_config()
-extern float readUltraViolet(void)
-extern uint16_t readVisible(void)
-extern uint16_t readInfrared(void)
-extern uint16_t readProximity(void)
+extern HAL_StatusTypeDef Si1445_default( Si1145_t *Si1145, I2C_HandleTypeDef *i2c )
+extern void Si1145_writeValue( Si1145_t *Si1145, uint8_t reg, uint8_t val )
+extern uint8_t Si1145_readValue( Si1145_t *Si1145, uint8_t reg )
+extern uint8_t Si1145_writeParam( Si1145_t *Si1145, uint8_t val1, uint8_t val2 )
+extern uint8_t Si1145_readParam( uint8_t val )
+extern uint16_t Si1145_readMeasurment( Si1145_t *Si1145, uint8_t offset )
+extern void Si1145_reset( Si1145_t *Si1145 )
+extern void Si1145_default_config( Si1145_t *Si1145 )
+extern float Si1145_readUltraViolet( Si1145_t *Si1145 )
+extern uint16_t readVisible( Si1145_t *Si1145 )
+extern uint16_t readInfrared( Si1145_t *Si1145 )
+extern uint16_t readProximity( Si1145_t *Si1145 )
 
 #endif
