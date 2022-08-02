@@ -10,6 +10,7 @@ typedef struct
     I2C_HandleTypeDef *i2c;
     uint16_t address;
     uint8_t i2c_delay;
+    uint8_t buffer;
 } Si1145_t;
 
 /* 

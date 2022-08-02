@@ -13,6 +13,7 @@ HAL_StatusTypeDef Si1445_default( Si1145_t *Si1145, I2C_HandleTypeDef *i2c )
 	Si1145->i2c = i2c;
 	Si1145->address = SI1145_PARAM_ADDR;
 	Si1145->i2c_delay = 100;
+	Si1145->buffer = 0;
 
 	Si1145_default_config( Si1145 );
 	return HAL_OK;
@@ -25,9 +26,8 @@ void Si1145_writeValue( Si1145_t *Si1145, uint8_t reg, uint8_t val )
 
 uint8_t Si1145_readValue( Si1145_t *Si1145, uint8_t reg )
 {
-	uint8_t data;
-	HAL_I2C_Mem_Read( Si1145->i2c, Si1145->address, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, Si1145->i2c_delay );
-	return data;
+	HAL_I2C_Mem_Read( Si1145->i2c, Si1145->address, reg, I2C_MEMADD_SIZE_8BIT, Si1145->buffer, 1, Si1145->i2c_delay );
+	return Si1145->buffer;
 }
 
 uint8_t Si1145_writeParam( Si1145_t *Si1145, uint8_t val1, uint8_t val2 )
@@ -37,7 +37,7 @@ uint8_t Si1145_writeParam( Si1145_t *Si1145, uint8_t val1, uint8_t val2 )
 	return Si1145_readValue( Si1145, SI1145_REG_PARAMRD );
 }
 
-uint8_t Si1145_readParam( uint8_t val )
+uint8_t Si1145_readParam( Si1145_t *Si1145, uint8_t val )
 {
 	Si1145_writeValue( Si1145, SI1145_REG_COMMAND, val | SI1145_PARAM_QUERY );
 	return Si1145_readValue( Si1145, SI1145_REG_PARAMRD );
@@ -55,12 +55,12 @@ uint16_t Si1145_readMeasurment( Si1145_t *Si1145, uint8_t offset )
 void Si1145_reset( Si1145_t *Si1145 )
 {
 	Si1145_writeValue( Si1145, SI1145_REG_MEASRATE0, 0x00 );
-	Si1145_writeValue( Si1145, SI1145_REG_MEASRATE1, 0x00);
-	Si1145_writeValue( Si1145, SI1145_REG_IRQEN,     0x00);
-	Si1145_writeValue( Si1145, SI1145_REG_IRQMODE1,  0x00);
-	Si1145_writeValue( Si1145, SI1145_REG_IRQMODE2,  0x00);
-	Si1145_writeValue( Si1145, SI1145_REG_INTCFG,    0x00);
-	Si1145_writeValue( Si1145, SI1145_REG_IRQSTAT,   0xFF);
+	Si1145_writeValue( Si1145, SI1145_REG_MEASRATE1, 0x00 );
+	Si1145_writeValue( Si1145, SI1145_REG_IRQEN,     0x00) ;
+	Si1145_writeValue( Si1145, SI1145_REG_IRQMODE1,  0x00 );
+	Si1145_writeValue( Si1145, SI1145_REG_IRQMODE2,  0x00 );
+	Si1145_writeValue( Si1145, SI1145_REG_INTCFG,    0x00 );
+	Si1145_writeValue( Si1145, SI1145_REG_IRQSTAT,   0xFF );
 
 	Si1145_writeValue( Si1145, SI1145_REG_COMMAND, SI1145_RESET );
 
@@ -137,30 +137,26 @@ void Si1145_default_config( Si1145_t *Si1145 )
 
 float Si1145_readUltraViolet( Si1145_t *Si1145 )
 {
-	float UV = Si1145_readMeasurment( Si1145, 0x2C ) / 100.0f;
-    return UV;
+	return ( (float) Si1145_readMeasurment( Si1145, 0x2C ) / 100.0f );
 }
 
 /* Read visible light measurements */
 
-uint16_t readVisible( Si1145_t *Si1145 )
+uint16_t Si1145_readVisible( Si1145_t *Si1145 )
 {
-	uint16_t Visible = Si1145_readMeasurment( Si1145, SI1145_REG_ALSVISDATA0 );
-    return Visible;
+	return Si1145_readMeasurment( Si1145, SI1145_REG_ALSVISDATA0 );
 }
 
 /* Read IR measurements */
 
-uint16_t readInfrared( Si1145_t *Si1145 )
+uint16_t Si1145_readInfrared( Si1145_t *Si1145 )
 {
-	uint16_t Infrared = Si1145_readMeasurment( Si1145, SI1145_REG_ALSIRDATA0 );
-    return Infrared;
+	return Si1145_readMeasurment( Si1145, SI1145_REG_ALSIRDATA0 );
 }
 
 /* Read proximity measurements */
 
-uint16_t readProximity( Si1145_t *Si1145 )
+uint16_t Si1145_readProximity( Si1145_t *Si1145 )
 {
-	uint16_t Proximity = Si1145_readMeasurment( Si1145, SI1145_REG_PS1DATA0 );
-    return Proximity;
+	return Si1145_readMeasurment( Si1145, SI1145_REG_PS1DATA0 );
 }
